@@ -1,0 +1,88 @@
+<div class="wiki">
+<table style="text-align: center;">
+<thead>
+  <tr>
+  <% @statuses.each do |status| %>
+    <th colspan="3"><%= status.name %></th>
+    <th></th>
+  <% end %>
+  </tr>
+</thead>
+<% workflows.each do |workflow|
+  direction = "empty" %>
+  <tr>
+  <% @statuses.each do |status| %>
+    <%
+    if workflow.old_status_id == status.id
+      if "empty" == direction
+        direction = "right_start"
+      else
+        direction = "left_end"
+      end
+    elsif workflow.new_status_id == status.id
+      if "empty" == direction
+        direction = "left_start"
+      else
+        direction = "right_end"
+      end
+    end
+
+    case direction
+    when "right_start"
+    %>
+    <td></td>
+    <td>&#9475;</td>
+    <td>&#8594;</td>
+    <td><%= @role.name %></td>
+    <% when "right", "left" %>
+    <td>&#9472;</td>
+    <td>&#9472;</td>
+    <td>&#9472;</td>
+    <td>&#9472;</td>
+    <% when "right_end" %>
+    <td>&#8594;</td>
+    <td>&#9475;</td>
+    <td></td>
+    <td></td>
+    <% when "left_start" %>
+    <td></td>
+    <td>&#9475;</td>
+    <td>&#8592;</td>
+    <td><%= @role.name %></td>
+    <% when "left_end" %>
+    <td>&#8592;</td>
+    <td>&#9475;</td>
+    <td></td>
+    <td></td>
+    <% when "empty" %>
+    <td></td>
+    <td>&#9475;</td>
+    <td></td>
+    <td></td>
+    <% end %>
+    <%
+      case direction
+      when "right_start"
+        direction = "right"
+      when "left_start"
+        direction = "left"
+      when "right_end", "left_end"
+        direction = "empty"
+      end
+    %>
+  <% end %>
+  </tr>
+<% end %>
+<tbody>
+
+</tbody>
+</table>
+</div>
+
+<%= javascript_tag do %>
+function hidden_role_field() {
+  $('#role_id').parent().hide();
+}
+
+hidden_role_field();
+<% end %>
